@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Speech Emotion Recognition</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(
+                135deg,
+                #667eea,
+                #764ba2
+            );
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 30px 15px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+
+            background: rgba(255, 255, 255, 0.97);
+
+            border-radius: 28px;
+
+            padding: 40px;
+
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header-icon {
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 42px;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           UPLOAD AREA
+        ========================= */
+
+        .upload-box {
+            border: 2px dashed #667eea;
+
+            border-radius: 22px;
+
+            background: #f8f9ff;
+
+            padding: 40px 25px;
+
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+        .upload-title {
+            font-size: 22px;
+            color: #374151;
+            margin-bottom: 22px;
+        }
+
+        .file-input {
+            width: 100%;
+
+            padding: 15px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 12px;
+
+            background: white;
+
+            font-size: 16px;
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .detect-btn {
+            width: 100%;
+
+            border: none;
+
+            border-radius: 15px;
+
+            padding: 18px;
+
+            background: linear-gradient(
+                135deg,
+                #667eea,
+                #5a67d8
+            );
+
+            color: white;
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.25s;
+
+            box-shadow:
+                0 8px 20px rgba(
+                    102,
+                    126,
+                    234,
+                    0.35
+                );
+        }
+
+        .detect-btn:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 25px rgba(
+                    102,
+                    126,
+                    234,
+                    0.45
+                );
+        }
+
+        /* =========================
+           ERROR
+        ========================= */
+
+        .error {
+            margin-top: 20px;
+
+            padding: 15px;
+
+            border-radius: 12px;
+
+            background: #fee2e2;
+
+            color: #b91c1c;
+
+            text-align: center;
+        }
+
+        /* =========================
+           RESULT
+        ========================= */
+
+        .result {
+            margin-top: 35px;
+
+            padding: 35px 25px;
+
+            background: #f5f6ff;
+
+            border-radius: 22px;
+
+            text-align: center;
+        }
+
+        .result h2 {
+            font-size: 30px;
+
+            color: #1f2937;
+
+            margin-bottom: 20px;
+        }
+
+        .emotion {
+            font-size: 55px;
+
+            font-weight: bold;
+
+            color: #667eea;
+
+            margin-bottom: 12px;
+        }
+
+        .confidence {
+            font-size: 20px;
+
+            color: #374151;
+        }
+
+        .confidence strong {
+            color: #667eea;
+        }
+
+        /* =========================
+           PROBABILITIES
+        ========================= */
+
+        .probability-section {
+            margin-top: 30px;
+
+            text-align: left;
+        }
+
+        .probability-title {
+            text-align: center;
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            color: #374151;
+
+            margin-bottom: 20px;
+        }
+
+        .probability {
+            margin-bottom: 15px;
+        }
+
+        .prob-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 7px;
+
+            font-size: 15px;
+
+            color: #374151;
+        }
+
+        .bar {
+            height: 10px;
+
+            background: #e5e7eb;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+
+            background: linear-gradient(
+                90deg,
+                #667eea,
+                #764ba2
+            );
+
+            border-radius: 20px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            text-align: center;
+
+            margin-top: 30px;
+
+            color: #9ca3af;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 25px 18px;
+
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+            .subtitle {
+                font-size: 15px;
+            }
+
+            .emotion {
+                font-size: 42px;
+            }
+
+            .upload-box {
+                padding: 30px 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="header-icon">
+            🎙️
+        </div>
+
+        <h1>
+            Speech Emotion Recognition
+        </h1>
+
+        <p class="subtitle">
+            Upload a speech recording and our
+            AI model will analyze the audio
+            and detect the speaker's emotion.
+        </p>
+
+    </div>
+
+
+    <!-- FORM -->
+
+    <form
+        action="/predict"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <div class="upload-box">
+
+            <div class="upload-title">
+                🎵 Select a WAV audio file
+            </div>
+
+            <input
+                class="file-input"
+                type="file"
+                name="audio"
+                accept=".wav,audio/wav"
+                required
+            >
+
+        </div>
+
+
+        <button
+            class="detect-btn"
+            type="submit"
+        >
+            🔍 Detect Emotion
+        </button>
+
+    </form>
+
+
+    <!-- ERROR -->
+
+    {% if error %}
+
+    <div class="error">
+        ⚠️ {{ error }}
+    </div>
+
+    {% endif %}
+
+
+    <!-- RESULT -->
+
+    {% if emotion %}
+
+    <div class="result">
+
+        <h2>
+            Detected Emotion
+        </h2>
+
+        <div class="emotion">
+
+            {% if emotion == "happy" %}
+                😊
+            {% elif emotion == "sad" %}
+                😢
+            {% elif emotion == "angry" %}
+                😡
+            {% elif emotion == "calm" %}
+                😌
+            {% elif emotion == "neutral" %}
+                😐
+            {% elif emotion == "fearful" %}
+                😨
+            {% elif emotion == "disgust" %}
+                🤢
+            {% elif emotion == "surprised" %}
+                😲
+            {% endif %}
+
+            {{ emotion | title }}
+
+        </div>
+
+
+        <div class="confidence">
+
+            Confidence:
+
+            <strong>
+                {{ confidence }}%
+            </strong>
+
+        </div>
+
+
+        <!-- PROBABILITY BARS -->
+
+        {% if probabilities %}
+
+        <div class="probability-section">
+
+            <div class="probability-title">
+                📊 Emotion Analysis
+            </div>
+
+
+            {% for item in probabilities %}
+
+          <div class="probability">
+
+    <div class="prob-header">
+
+        <span>
+            {{ item.emotion | title }}
+        </span>
+
+        <span>
+            {{ item.probability }}%
+        </span>
+
+    </div>
+
+    <div class="bar">
+
+        <div
+            class="bar-fill"
+            data-width="{{ item.probability }}">
+        </div>
+    
+
+    </div>
+
+</div>
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        Powered by
+        <strong>MFCC + CNN + BiLSTM</strong>
+        Deep Learning
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
